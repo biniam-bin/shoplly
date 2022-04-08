@@ -85,20 +85,20 @@ const cartData = [
 
 ]
 
-export const CartItem = ({ item }) => {
+export const CartItem = ({ item, img }) => {
   const { name, image, price, description, amount } = item
   const dispatch = useDispatch()
   return (
     <CartItemwrapper>
       
       <CartLeft>
-        <SideCartImage src={image} />
+        <SideCartImage src={image || img} style={{height: '100px'}}/>
 
       </CartLeft>
       <CartRight>
         <CartInfo>
           <CartTitle>{name}</CartTitle>
-          <CartDescription>{item.description}effsdx</CartDescription>
+          <CartDescription>{description}</CartDescription>
           <CartItemBottom>
             <CartPrice>${price}</CartPrice>
             <CartItemAmountContainer>

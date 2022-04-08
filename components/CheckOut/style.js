@@ -180,8 +180,15 @@ export const SingleAmount = styled.span`
     position: absolute;
     /* left: 1000px; */
     margin-left: 80px;
-    font-size: 12px;
-    padding: 1px 4px;
+
+
+    background-image: linear-gradient(to bottom right, #1c60d6 , #c916c3);
+    /* border-radius: 50%; */
+    color: white;
+    padding: 4px 6px;
+    /* position: absolute; */
+    font-size: 10px;
+
     
 
 `

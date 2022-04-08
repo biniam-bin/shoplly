@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 
 export const NavWrapper = styled.div`
     /* background-color: red; */
-    height: 60px;
+    height: 90px;
     border-bottom: 1px solid lightgray;
     width: 90%;
     margin-right: auto;
@@ -102,13 +102,18 @@ export const ShopBag = styled.div`
 `;
 
 export const CartValue = styled.span`
-    background-color: blue;
+    /* background-color: blue; */
+    /* background: rgb(2,0,36); */
+    /* background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(191,37,159,1) 35%, rgba(0,212,255,1) 100%); */
+    background-image: linear-gradient(to bottom right, #1c60d6 , #c916c3);
     border-radius: 50%;
+    color: white;
     margin-right: -20px;
     margin-top: -23px;
     font-size: 12px;
-    padding: 0px 4px;
+    padding: 2px 6px;
     position: absolute;
+    font-size: 10px;
 
 `
 

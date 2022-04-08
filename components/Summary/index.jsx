@@ -6,6 +6,10 @@ import { CheckoutItem } from "../CheckOut"
 import { ContinueShpping } from '../Nav/style'
 import { Controls, PlayState, Tween } from 'react-gsap';
 import Confetti from 'react-confetti'
+import { useSelector, useDispatch } from "react-redux"
+
+import { Checkoutitem, Cartimage, SingleAmount, ItemName, ItemDescription} from "../CheckOut/style"
+
 
 
 const cartData = [
@@ -28,6 +32,8 @@ const cartData = [
 ]
 
 const index = () => {
+    const order = useSelector(state => state.checkout.order.createOrder)
+    // alert(order.createOrder.orderId)
     return (
         <SummaryWrapper>
             <Confetti
@@ -61,7 +67,7 @@ const index = () => {
                             ORDER NO
                         </CartText>
                         <PriceSection>
-                            568954
+                            {order.orderId.slice(0, 5)}...
                         </PriceSection>
                     </SubSectionWrapper>
                     <SubSectionWrapper marginTop="-15px" style={{ width: '60%' }}>
@@ -69,15 +75,16 @@ const index = () => {
                             EST DELIVERY DATE
                         </CartText>
                         <PriceSection style={{ display: 'flex', width: '30%', textAlign: 'left', justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-                            18 APRIL, 2022
+                            {order.deliveryDate}
                         </PriceSection>
                     </SubSectionWrapper>
                     <SubSectionWrapper marginTop="-25px" style={{ width: '70%', borderBottom: "1px solid lightgray", paddingBottom: '20px' }}>
                         <CartText style={{ display: 'flex', flexWrap: 'noWrap', textAlign: 'left' }}>
                             SHIPPING DETAILS
                         </CartText>
-                        <PriceSection style={{ display: 'flex', width: '140px', alignItems: 'left', marginRight: '38px', marginTop: '30px' }}>
-                            BINIAM DANIEL AFRICA AVN ST, ADDIS ABABA ETHIOPIA
+                        <PriceSection style={{ display: 'flex', width: '140px', alignItems: 'left', marginRight: '38px', marginTop: '30px', textTransform: 'uppercase' }}>
+
+                            {order.customerFullName} {order.customerAddress1}, {order.customerCity} {order.country}
                         </PriceSection>
                     </SubSectionWrapper>
                     <TotaltextSection>
@@ -86,9 +93,22 @@ const index = () => {
                         <PriceSection>$4507</PriceSection>
                     </TotaltextSection>
                     <Cartinfo>
-                        {cartData.map((item) => {
+                        {order.orderItems.map((item) => {
                             return (
-                                <CheckoutItem key={item.amount} item={item} />
+                                // <CheckoutItem key={item.amount} item={item.product} />
+                                // <>
+                                    <Checkoutitem key={item.name}>
+                                        <Cartimage style={{ width: '90px', height: '90px' }} src={item.product.images[0].url} />
+                                        <SingleAmount>{item.quantity}</SingleAmount>
+                                        <div className="" style={{ width: '100%', marginLeft: 52 }}>
+                                            <ItemName>{item.product.name}</ItemName>
+                                            <ItemDescription>{item.product.description}</ItemDescription>
+                                        </div>
+                                        <PriceSection>
+                                            <p>${item.product.price}</p>
+                                        </PriceSection>
+                                    </Checkoutitem>
+                                // </>
                             )
                         })}
                     </Cartinfo>

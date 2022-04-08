@@ -84,7 +84,7 @@ export const BodyRight = styled.div`
 `
 export const CardContainer = styled.div`
     margin-top: 55px;
-    margin-left: 6px;
+    margin-left: 70px;
     margin-right: auto;
     width: 100%;
 
@@ -95,7 +95,7 @@ export const CardWrapper = styled.div`
     background-color: white;
     display: inline-block;
     height: 315px;
-    width: 220px;
+    width: 240px;
     margin: 6px 20px;
     border-radius: 15px;
     padding:17px 0;
@@ -152,9 +152,13 @@ export const CardButton = styled.div`
     border-radius: 50px;
     margin-right: auto;
     margin-left: auto;
-    background-color: black;
-    color: white;
+    background-color: ${props => props.added ? "#fff" : "#000"};
+    color: ${props => props.added ? "#000" : "#fff"};
 
+    /* ${props => props.added }{
+        background-color: red;
+    } */
+   
     display: flex;
     justify-content: center;
     align-items: center;

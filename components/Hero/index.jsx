@@ -8,6 +8,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setActiveTab, setActiveTabId } from "../../features/tab/tabSclice"
 import {filterByType} from "../../features/products/productSclice"
 
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+
 // import 
 
 const PRODUCT_TYPES = gql`
@@ -111,11 +115,7 @@ const index = () => {
     let result = useQuery(PRODUCT_TYPES)
 
     
-    if (result.loading) {
-        return (
-            <p>Loading</p>
-        )
-    }
+    
     return (
         <HeroWrapper>
             <SearchWrapper>
@@ -124,17 +124,18 @@ const index = () => {
             </SearchWrapper>
             <TypesWrapper>
                 <TypesList>
-                    {result.data.categories.map((type) => {
+                    {/* {result.loading ? <Skeleton baseColor="red" width="200"/> : ''} */}
+                    {result.loading ? <Skeleton baseColor="lightgray" width={550} height={20} /> : result.data.categories.map((type) => {
                         if (activeTab == type.name) {
 
                             return (
 
-                                <Type active onClick={() => dispatch(setActiveTab(type.name))}>{type.name}</Type>
+                                <Type key={type.name} active onClick={() => dispatch(setActiveTab(type.name))}>{type.name}</Type>
                             )
                         } else {
                             return (
 
-                                <Type onClick={() => dispatch(setActiveTab(type.name))}>{type.name}</Type>
+                                <Type key={type.name} onClick={() => dispatch(setActiveTab(type.name))}>{type.name}</Type>
                             )
 
                         }

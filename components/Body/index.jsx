@@ -5,7 +5,12 @@ import { useQuery, gql } from "@apollo/client"
 
 import { useSelector, useDispatch } from 'react-redux'
 import { getAllProducts } from "../../features/products/productSclice"
-import {addToCart} from "../../features/cart/cartSclice"
+import { addToCart } from "../../features/cart/cartSclice"
+
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
+
+import { Controls, PlayState, Tween } from 'react-gsap';
 
 const PRODUCTS = gql`
   query{
@@ -33,30 +38,37 @@ const PRODUCTS = gql`
 `;
 
 export const Card = (product) => {
-    const { name, image, description, price } = product;
+    const { name, image, description, price, productId } = product;
     const dispatch = useDispatch()
+    // let inCart = true
+    const addedItems = useSelector(state => state.cart.cartItems)
+    let added = addedItems.find(element => element.name == name)
+
     return (
-        <CardWrapper>
-            <CardImageContainer>
-                <CardImage style={{ width: '190px', height: '210px' }} src={image} />
-            </CardImageContainer>
-            <Cardinfo>
-                {name.length <= 14 ?
-                    <CardName>{name}</CardName>
-                    :
-                    <CardName>{ name.slice(0, 14) }...</CardName>
-            }
-                <CardPrice>${price}</CardPrice>
-            </Cardinfo>
-            <CardButton onClick={() => dispatch(addToCart({name: name, price: price, image: image, amount: 1, desccription: description}))}>ADD TO CART</CardButton>
-        </CardWrapper>
+        <Tween from={{y: '100px'}} to={{ y: '-10px'}} duration={4} ease="back.out(1.7)">
+
+            <CardWrapper>
+                <CardImageContainer>
+                    <CardImage style={{ width: '190px', height: '210px' }} src={image} />
+                </CardImageContainer>
+                <Cardinfo>
+                    {name.length <= 14 ?
+                        <CardName>{name}</CardName>
+                        :
+                        <CardName>{name.slice(0, 14)}...</CardName>
+                    }
+                    <CardPrice>${price}</CardPrice>
+                </Cardinfo>
+                <CardButton added={added} onClick={() => dispatch(addToCart({ name: name, productId: productId, price: price, image: image, amount: 1, description: description }))}>{added ? 'ADDED' : 'ADD TO CART'}</CardButton>
+            </CardWrapper>
+        </Tween>
     )
 }
 
 
 
 
-const index =  () => {
+const index = () => {
     const FilterItemsList = [
         { name: "Sofas" },
         { name: "Beds" },
@@ -74,7 +86,7 @@ const index =  () => {
         { name: "Price(Low to High)" },
         { name: "Price(High to Low)" },
     ]
-    const {loading, error, data } = useQuery(PRODUCTS)
+    const { loading, error, data } = useQuery(PRODUCTS)
     const products = useSelector(state => state.product.products)
     // const loading = useSelector(state => state.product.loading)
     const dispatch = useDispatch()
@@ -83,63 +95,55 @@ const index =  () => {
     //     dispatch(getAllProducts(data?.categories[1].products))
     // }, [])
 
-    if (loading) { 
-        return (
-            <p>Loading</p>
-        )
 
-    } 
 
-    // if (error) {
-    //     return (
-    //         <p>Error</p>
-    //     )
-    // }
-        return (
-            <BodyWrapper>
-                <BodyLeft>
-                    <LeftWrapper>
-                        <LeftText>Filter</LeftText>
-                        {FilterItemsList.map((item) => {
+    return (
+        <BodyWrapper>
+            <BodyLeft>
+                <LeftWrapper>
+                    <LeftText>Filter</LeftText>
+                    {FilterItemsList.map((item) => {
+                        return (
+                            <FilterItem key={item.name}>
+                                <FilterItemCombo id="finput" type="checkbox" />
+                                <FilterItemText>{item.name}</FilterItemText>
+                            </FilterItem>
+                        )
+                    })}
+                    <LeftBottom>
+
+                        <LeftText>Sort</LeftText>
+                        {SortItemsList.map((item) => {
                             return (
-                                <FilterItem>
-                                    <FilterItemCombo id="finput" type="checkbox" />
-                                    <FilterItemText>{item.name}</FilterItemText>
+                                <FilterItem key={item.name}>
+                                    <SortItemRadio id="finput" type="radio" />
+                                    <SortItemText>{item.name}</SortItemText>
                                 </FilterItem>
                             )
                         })}
-                        <LeftBottom>
+                    </LeftBottom>
 
-                            <LeftText>Sort</LeftText>
-                            {SortItemsList.map((item) => {
-                                return (
-                                    <FilterItem >
-                                        <SortItemRadio id="finput" type="radio" />
-                                        <SortItemText>{item.name}</SortItemText>
-                                    </FilterItem>
-                                )
-                            })}
-                        </LeftBottom>
+                </LeftWrapper>
+            </BodyLeft>
 
-                    </LeftWrapper>
-                </BodyLeft>
-            
-                <BodyRight id="right">
-                    <CardContainer>
-                        {products?.map((product) => {
-                            return (<Card name={product.name} price={product.price} description={product.description} image={product.images[1].url} />)
-                        })}
-                        
-                        {/* <Card />
+            <BodyRight id="right">
+                <CardContainer>
+                    {/* {loading ? <Skeleton baseColor="lightgray" count={3} style={{display: 'flex'}} height={ 300}/> : ''} */}
+                    {loading ? <Skeleton baseColor="lightgray" count={3} style={{ display: 'flex' }} height={300} width={1100} /> : products?.map((product) => {
+                        return (
+                            <Card key={product.productId} name={product.name} productId={product.productId} price={product.price} description={product.description} image={product.images[1].url} />)
+                    })}
+
+                    {/* <Card />
                         <Card />
                         <Card />
                         <Card />
                         <Card /> */}
-                    </CardContainer>
-                </BodyRight>
-            </BodyWrapper>
-        )
-    
+                </CardContainer>
+            </BodyRight>
+        </BodyWrapper>
+    )
+
 }
 
 export default index

@@ -1,23 +1,28 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Link from "next/link"
 import { Aggreements, Bodywrapper, Cartimage, Cartinfo, CartText, cartText, Checkoutitem, CheckoutWrapper, ChoiceSection, CompleteBtn, Footer, Form, FormText, Header, Image, Input, InputWrapper, ItemDescription, ItemName, Main, PriceSection, ReturnBtn, ShippingInputs, SingleAmount, SmallInput, SubSection, SubSectionWrapper } from "./style"
 import { SortItemRadio } from '../Body/style'
 import { openNav } from '../Nav'
+import { useMutation, gql } from "@apollo/client"
+import { useSelector, useDispatch } from "react-redux"
+import { getOrder } from "../../features/checkout/checkoutSclice"
+import { useRouter } from "next/router"
 
+// var nodemailer = require('nodemailer');
 
 
 export const CheckoutItem = ({ item }) => {
     const { name, image, price, description, amount } = item
     return (
         <Checkoutitem>
-            <Cartimage style={{ width: '90px', height: '90px' }} src="https://picsum.photos/200/200" />
-            <SingleAmount>3</SingleAmount>
+            <Cartimage style={{ width: '90px', height: '90px' }} src={image} />
+            <SingleAmount>{amount}</SingleAmount>
             <div className="" style={{ width: '100%', marginLeft: 32 }}>
-                <ItemName>ONYX  WOOD CHAIR</ItemName>
-                <ItemDescription>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque libero quis magni perferendis facere. Sit a soluta sunt.</ItemDescription>
+                <ItemName>{name}</ItemName>
+                <ItemDescription>{ description }</ItemDescription>
             </div>
             <PriceSection>
-                <p>$4562</p>
+                <p>${ price }</p>
             </PriceSection>
         </Checkoutitem>
     )
@@ -43,6 +48,46 @@ const cartData = [
 ]
 
 
+
+
+const CHECKOUT = gql`
+
+mutation Checkout($email: String!, $name: String!, $address1: String!, $address2: String!, $city: String!, $country: String!, $zip: String!, $orderItems:  [OrderItemInput]){
+    createOrder(input: {
+        customerEmailPhone: $email,
+        customerFullName: $name,
+        customerAddress1: $address1,
+        customerAddress2: $address2,
+        customerCity: $city,
+        country: $country,
+        zipCode: $zip,
+        orderItems: $orderItems,
+    }){
+        orderId
+        deliveryDate
+        customerFullName,
+        customerAddress1,
+        customerCity,
+        country
+        customerEmailPhone,
+        orderItems{
+        quantity
+        product{
+            name
+            description
+            price
+            images{
+               url
+            }
+            
+        }
+        }
+  }
+}
+
+
+`
+
 const index = () => {
 
     const [email, setEmail] = useState('');
@@ -53,6 +98,38 @@ const index = () => {
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
     const [zip, setZip] = useState('');
+
+    const dispatch = useDispatch()
+    const router = useRouter()
+
+
+    const CartItems = useSelector(state => state.cart.cartItems)
+    const total = useSelector(state => state.cart.total)
+
+    let checkoutItems = []
+
+    for (var item of CartItems) {
+        checkoutItems.push({ productId: item.productId, quantity: item.amount})
+    }
+
+
+    let [submit, { data, loading, error }] = useMutation(CHECKOUT, {
+        onCompleted: (data) => {
+            dispatch(getOrder(data))
+            router.push('/summary')
+            
+        }
+    });
+
+
+    // submit()
+    const submitData = async () => {
+        // e.preventDefault();
+        submit({
+            variables: {
+                email: email, name: fName, address1: fAddress, address2: sAddress, city: city, country: country, zip: zip, orderItems: checkoutItems}})
+        // console.log(data, error, loading)
+    }
 
 
     return (
@@ -110,9 +187,9 @@ const index = () => {
                     <div style={{ display: 'flex', marginLeft: '110px', width: '100%', flexDirection: 'column' }} className="">
 
                         <Cartinfo>
-                            {cartData.map((item) => {
+                            {CartItems.map((item) => {
                                 return (
-                                    <CheckoutItem key={item.amount} item={item} />
+                                    <CheckoutItem key={item.name} item={item} />
                                 )
                             })}
                         </Cartinfo>
@@ -123,7 +200,7 @@ const index = () => {
                                     SUBTOTAL
                                 </CartText>
                                 <PriceSection>
-                                    $450
+                                    ${total}
                                 </PriceSection>
                             </SubSectionWrapper>
                             {/* </div> */}
@@ -133,7 +210,7 @@ const index = () => {
                                     SHIPPING
                                 </CartText>
                                 <PriceSection>
-                                    $450
+                                    $150
                                 </PriceSection>
                             </SubSectionWrapper>
                             {/* </div> */}
@@ -144,7 +221,7 @@ const index = () => {
                                     TOTAL
                                 </CartText>
                                 <PriceSection>
-                                    $450
+                                    ${total > 0 ? total + 150: 0}
                                 </PriceSection>
                             </SubSectionWrapper>
                         </SubSection>
@@ -154,7 +231,7 @@ const index = () => {
                     <Link href="/">
                         <ReturnBtn onClick={() => setTimeout(openNav, 1200)}><Image src="/Icons/arrow_left.svg" /><span>RETURN TO CART</span></ReturnBtn>
                     </Link>
-                    <CompleteBtn>Complete Order</CompleteBtn>
+                    <CompleteBtn onClick={submitData}>Complete Order</CompleteBtn>
                 </ChoiceSection>
             </Main>
             {/* <Footer>
