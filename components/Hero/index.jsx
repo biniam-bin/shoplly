@@ -57,7 +57,7 @@ const FILTER_BY_TAB = gql`
 `;
 
 
-const index = () => {
+const Index = () => {
     // const { activeTab, setActiveTab } = useContext(TabContext)
 
     const activeTab = useSelector(state => state.tab.activeTab)
@@ -147,4 +147,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index

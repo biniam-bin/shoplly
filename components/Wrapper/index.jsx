@@ -1,6 +1,8 @@
 import React from 'react'
 import { Footer, FooterContainer } from './style'
-const index = ({ Component, pageProps }) => {
+
+
+const Index = ({ Component, pageProps }) => {
     return (
         <div style={{ width: '100%' }}>
             <Component {...pageProps} />
@@ -15,4 +17,4 @@ const index = ({ Component, pageProps }) => {
     )
 }
 
-export default index
+export default Index

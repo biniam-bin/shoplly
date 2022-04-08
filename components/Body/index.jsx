@@ -68,7 +68,7 @@ export const Card = (product) => {
 
 
 
-const index = () => {
+const Index = () => {
     const FilterItemsList = [
         { name: "Sofas" },
         { name: "Beds" },
@@ -146,4 +146,4 @@ const index = () => {
 
 }
 
-export default index
+export default Index

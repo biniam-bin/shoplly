@@ -164,7 +164,7 @@ export const SideNav = () => {
   )
 }
 
-const index = () => {
+const Index = () => {
 
   const CartItems = useSelector(state => state.cart.cartItems.length)
   return (
@@ -196,4 +196,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index

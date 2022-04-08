@@ -88,7 +88,7 @@ mutation Checkout($email: String!, $name: String!, $address1: String!, $address2
 
 `
 
-const index = () => {
+const Index = () => {
 
     const [email, setEmail] = useState('');
     const [fName, setfName] = useState('');
@@ -241,4 +241,4 @@ const index = () => {
     )
 }
 
-export default index
+export default Index
